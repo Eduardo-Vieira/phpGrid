@@ -30,7 +30,7 @@ if ($_REQUEST['identifier'] == 'xhrPesquisar') {
         
         [
             'USUARIO.ID_USUARIO' => 4,
-            'USUARIO.TX_LOGIN' => 'carlos/edu',
+            'USUARIO.TX_LOGIN' => 'carlos.edu',
             'USUARIO.TX_EMAIL' => 'jcedut85@gmail.com',
             'USUARIO.TX_SENHA' => '5566',
             'USUARIO.CS_SITUACAO' => '1'
@@ -108,7 +108,10 @@ if ($_REQUEST['identifier'] == 'xhrPesquisar') {
         'pagination' => [
             'perPage' => 5,
             'pages' => 10
-        ], // or true/false
+        ], // or true/false,
+
+        'readyonly' => false,
+
         'columns' => [
     
             'primaryKey' => ['USUARIO.ID_USUARIO'],
@@ -137,7 +140,7 @@ if ($_REQUEST['identifier'] == 'xhrPesquisar') {
             ],
     
     
-            'USUARIO.TX_EMAIL:THIS',
+            'USUARIO.TX_EMAIL',
     
     
             'USUARIO.TX_SENHA' => [

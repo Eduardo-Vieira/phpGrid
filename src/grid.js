@@ -47,6 +47,11 @@ serializeData = function(form) {
     let data = $(form).serializeArray();
 
     data.forEach(function(obj) {
+        // por algum motivo desconhecido chaves com . chegam como _ no php
+        // então resolvi trocando o . por um | e la no php eu retorno o | para .  no metodo Grid::sanitizeRequestPaginate();
+        // quem conseguir resolver esse problema faz um merge-request pra mim
+        obj.name = obj.name.replace('.', '|');
+        //
         gridOptions.data[obj.name] = obj.value;
     });
 };

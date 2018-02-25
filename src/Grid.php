@@ -83,6 +83,7 @@ class Grid {
     }
 
     protected static function regexSearchType($value, $type) {
+        $value = preg_quote($value);
         switch ($type) {
             case 'ANY':
                 $value = "/.*$value.*/";
@@ -105,7 +106,30 @@ class Grid {
     }
 
     public static function multiSearch($fields = [], $values = [], $data) {
+        $new_data   = [];
+        $no_matched = [];
 
+        foreach ($fields as $field_index => $field) { 
+            foreach ($data as $index => $array) {
+                $parts      = explode(':', $field);
+                $field      = $parts[0];
+                $searchType = isset($parts[1]) ? strtoupper($parts[1]) : 'ANY';
+
+                $value = self::regexSearchType($values[$field_index], $searchType);
+
+                if (preg_match($value, $array[$field])) {
+                    $new_data[$index] = $data[$index];
+                } else {
+                    $no_matched[] = $index;
+                }
+
+                if (in_array($index, $no_matched)) { 
+                    unset($new_data[$index]);
+                }
+            }
+        }
+
+        return $new_data;
     }
 
     public static function search($field, $value, $data) {
@@ -133,7 +157,8 @@ class Grid {
         foreach ($_REQUEST as $key => $value) {
             if (strpos($key, ':')) {
                 if (!empty($value)) { 
-                    $new_request[$key] = $value; 
+                    // recupera a chave que contem | para .
+                    $new_request[str_replace('|', '.', $key)] = $value; 
                 }
             }
         }
@@ -149,10 +174,10 @@ class Grid {
         
         $formSearchData = self::sanitizeRequestPaginate();
 
-        if (isset($formSearchData)) {
-            foreach ($formSearchData as $key => $value) {
-
-            }
+        if (!empty($formSearchData)) {
+            $fields = array_keys($formSearchData);
+            $values = array_values($formSearchData);
+            $data = self::multiSearch($fields, $values, $data);
         }
 
         $dataPage  = array_chunk($data, $perPage);
@@ -314,6 +339,14 @@ class Grid {
         $headerContent = self::createHeader();
         $bodyContent   = self::createBody();
         $footerContent = self::createFooter();
+
+        if (empty($bodyContent)) { 
+            $bodyContent = "<tr>
+                                <td colspan='100%' style='padding:30px; text-align:center;'>
+                                    <i class='fa fa-exclamation-circle'></i> Nenhum registro foi encontrado.
+                                </td>
+                            </tr>";
+        }
 
         echo $_REQUEST['thupan-reload-data-' . $name] ?
 
