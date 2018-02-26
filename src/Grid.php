@@ -245,10 +245,8 @@ class Grid {
             $search[] = "<th>$searchField</th>";
         }
 
-        $header = implode(' ', $header);
-        $header = "<tr>$header</tr>";
-
         if (self::isSearchable()) {
+            $header[] = "<th></th>";
             $search[] = "<th style='width:100px !important'>
                             <button class='btn btn-info formSearch-search'>
                                 <i class='fa fa-search'></i>
@@ -259,6 +257,12 @@ class Grid {
                             </button>
                         </th>";
             $search = implode(' ', $search);
+        }
+
+        $header = implode(' ', $header);
+        $header = "<tr>$header</tr>";
+
+        if (self::isSearchable()) {
             $header .= "<tr>$search</tr>";
         }
 
