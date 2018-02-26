@@ -96,12 +96,15 @@
                 :
                     false;
             },
-    
+            complete: function(){
+                el.find('table tbody tr:first').remove();
+            },
             success: function (data, textStatus, xhr) {
                 data = JSON.parse(data);
-
+               
                 loadData(data.output);
                 
+      
                 if (data.pagination) {
                     loadPagination(data.pagination);
                 }
