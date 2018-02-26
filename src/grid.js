@@ -91,6 +91,7 @@ grid = function (id, url, data, callback) {
             $(document).off("click", ".thupan-pagination-" + gridOptions.name + " a");
             
             $(document).on("click", ".thupan-formSearch-" + gridOptions.name + "-search", function (e) {
+                setCurrentPage(1);
                 grid(gridOptions.id, gridOptions.url, gridOptions.data, gridOptions.callback);
                 return false;
             });
