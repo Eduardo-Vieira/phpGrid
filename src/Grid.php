@@ -21,9 +21,9 @@ class Grid {
         $name = trim(preg_replace('/(\#|\.)/', '', self::$config['el']));
         
         if (strpos(self::$config['el'], '.')) {
-            $element = "class='$name'";
+            $element = "class='table-$name'";
         } else {
-            $element = "id='$name'";
+            $element = "id='table-$name'";
         }
 
         return ($nameOnly) ? $name : $element;
@@ -166,11 +166,10 @@ class Grid {
     }
 
     protected static function paginate() {
-        $name        = self::getElement(true);
         $data        = self::getData();
         $perPage     = self::$config['pagination']['perPage'];
         $maxPage     = self::$config['pagination']['pages'];
-        $currentPage = $_REQUEST['thupan-page'] ? $_REQUEST['thupan-page'] : 1;
+        $currentPage = $_REQUEST['page'] ? $_REQUEST['page'] : 1;
         
         $formSearchData = self::sanitizeRequestPaginate();
 
@@ -196,10 +195,10 @@ class Grid {
         
         self::$pagination = "<tr>
                                 <td colspan='100%'>
-                                    <ul id='thupan-pagination-$name' class='pagination thupan-pagination-$name' style='float:right'>
+                                    <ul class='pagination' style='float:right'>
                                         <li><a href='?page=1'>Primeiro</a></li>
                                         $links
-                                        <li><a href='?page=$totalPage'>Ultimo</a></li>
+                                        <li><a href='?page=$totalPage'>Último</a></li>
                                     </ul>
                                 </td>
                             </tr>";
@@ -208,7 +207,6 @@ class Grid {
     }
  
     protected static function createHeader() {
-        $name = self::getElement(true);
 
         foreach(self::getColumns() as $column => $config) {
             // verifica se o campo informa o tipo de pesquisa
@@ -241,7 +239,7 @@ class Grid {
                 $label      = $column;
             }
 
-            $sortIcon = self::isSortable() ? "<i class='fa fa-sort-amount-down thupan-formSearch-$name-sort' data-sort='ASC' data-field='$column' style='float:right; cursor:pointer'></i>" : false;
+            $sortIcon = self::isSortable() ? "<i class='fa fa-sort-amount-down formSearch-sort' data-sort='ASC' data-field='$column' style='float:right; cursor:pointer'></i>" : false;
 
             $header[] = "<th>$label $sortIcon</th>";
             $search[] = "<th>$searchField</th>";
@@ -252,11 +250,11 @@ class Grid {
 
         if (self::isSearchable()) {
             $search[] = "<th style='width:100px !important'>
-                            <button id='thupan-formSearch-$name-search' class='btn btn-info thupan-formSearch-$name-search'>
+                            <button class='btn btn-info formSearch-search'>
                                 <i class='fa fa-search'></i>
                             </button>
 
-                            <button id='thupan-formSearch-$name-reload' class='btn btn-default thupan-formSearch-$name-reload'>
+                            <button class='btn btn-default formSearch-reload'>
                                 <i class='fa fa-undo'></i>
                             </button>
                         </th>";
@@ -329,7 +327,6 @@ class Grid {
         self::$config = $config;
 
         $identifier    = self::getElement();
-        $name          = self::getElement(true);
         
         $attributes    = self::getAttributes($config['attributes']);
         $attributesH   = self::getAttributes($config['attributesHeader']);
@@ -348,18 +345,18 @@ class Grid {
                             </tr>";
         }
 
-        echo $_REQUEST['thupan-reload-data-' . $name] ?
+        echo $_REQUEST['reloadData'] ?
 
-            $bodyContent
+            json_encode(['output' => $bodyContent, 'pagination' => $footerContent])
         
-        :   "
-            <form id='thupan-formSearch-$name' class='thupan-formSearch-$name' name='thupan-formSearch-$name' action='' method='GET'>
+        :   json_encode(['output' => "
+            <form name='formSearch' class='formSearch' method='GET'>
                 <table $identifier $attributes>
                     <thead $attributesH>
                         $headerContent
                     </thead>
                 
-                    <tbody $attributesB thupan-data-load='true'>
+                    <tbody $attributesB>
                         $bodyContent
                     </tbody>
 
@@ -367,8 +364,8 @@ class Grid {
                         $footerContent
                     </tfoot>
                 </table>
-                <input type='hidden' id='thupan-reload-data-$name' class='thupan-reload-data-$name' name='thupan-reload-data-$name' value='true'>
-                <input type='hidden' id='thupan-currentPage-$name' class='thupan-currentPage-$name' name='thupan-currentPage-$name' value='1'>
-            </form>";
+                <input type='hidden' class='reloadData' name='reloadData' value='true'>
+                <input type='hidden' class='currentPage' name='currentPage' value='1'>
+            </form>"]);
     }
 }

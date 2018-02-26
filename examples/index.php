@@ -15,14 +15,25 @@
 <body>
 
     <div class="container">
+        <h1>Tabela 1</h1>
         <div id="tabela"></div>
     </div>
 
+    <div class="container">
+        <h1>Tabela 2</h1>
+        <div id="tabela2"></div>
+    </div>
+
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="../src/grid.js"></script>
-    <script type="text/javascript">
-        grid("#tabela", "examples/router.php", {
-            identifier: 'xhrPesquisar',
+
+    <script type="text/javascript" src="../src/Grid.js"></script>
+    <script type="text/javascript">        
+        $("#tabela").grid("../examples/router.php", {
+            identifier: 'xhrPesquisar'
+        });
+
+        $("#tabela2").grid("../examples/router.php", {
+            identifier: 'xhrPesquisar2'
         });
     </script>
 </body>
